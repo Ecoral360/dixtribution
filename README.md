@@ -27,7 +27,7 @@ dixtribution --version  # should output the version
 
 ## Dixtributors
 
-Dixtributors are middleware program that take the debug messages from [onze](https://github.com/matteodelabre/onze?tab=readme-ov-file)
+Dixtributors are middleware programs that take the debug messages from [onze](https://github.com/matteodelabre/onze?tab=readme-ov-file)
 and produce stats, analytics, and much more from it!
 
 You can add dixtributors to your execution with the `-d <DIXTRIBUTOR_NAME>` attribute in the `dixtribution` cli command.
