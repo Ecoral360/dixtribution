@@ -1,7 +1,7 @@
-# alice
+# dixtribution
 
-[![PyPI - Version](https://img.shields.io/pypi/v/alice.svg)](https://pypi.org/project/alice)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/alice.svg)](https://pypi.org/project/alice)
+[![PyPI - Version](https://img.shields.io/pypi/v/dixtribution.svg)](https://pypi.org/project/dixtribution)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/dixtribution.svg)](https://pypi.org/project/dixtribution)
 
 -----
 
@@ -13,9 +13,9 @@
 ## Installation
 
 ```console
-pip install alice
+pip install dixtribution
 ```
 
 ## License
 
-`alice` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+`dixtribution` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
