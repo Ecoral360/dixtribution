@@ -32,11 +32,13 @@ for file in os.listdir(dixtributors_path):
 def parse_args():
     parser = argparse.ArgumentParser(prog="dixtribution")
 
+    parser.add_argument("-V", "--version", action="version",
+                        version="%(prog)s 0.1")
+
     # Dixtribution arguments
     parser.add_argument("-i", "--iterations", type=int, default=10)
     parser.add_argument("-d", "--dixtributors", choices=all_dixtributors.keys(),
-                        nargs="+", action="append", required=True,
-                        help="Dixtributor to use")
+                        nargs="+", action="append", help="Dixtributor to use")
 
     # Onze arguments
     parser.add_argument("-r", "--rounds", type=int, default=10)
