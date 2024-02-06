@@ -12,7 +12,7 @@ bot using the [onze](https://github.com/matteodelabre/onze?tab=readme-ov-file) g
 
 - [Installation](#installation)
 - [Dixtributors](#Dixtributor)
-- [Contribute](#contribute)
+- [Custom Dixtributors](#adding-a-custom-dixtributor)
 - [License](#license)
 
 ## Installation
