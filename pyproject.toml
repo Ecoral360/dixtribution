@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dixtribution"
+version = "0.1.0"
+description = ''
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Mathis", email = "ecomath360@gmail.com" }]
+classifiers = ["Programming Language :: Python :: 3.11"]
+dependencies = []
+
+[project.scripts]
+dixtribution = "dixtribution.main:run"
+
+[tool.hatch.build]
+sources = ["src"]
+only-include = ["src"]
+
+[tool.hatch.envs.dev]
+dependencies = [
+    "black",
+    "mypy",
+    "pytest",
+    "ruff",
+]
+
+[tool.hatch.envs.dev.scripts]
+test = "pytest --exitfirst"
+test-verbose = "pytest --exitfirst -vv"
+format = "black ."
+format-check = "black --check ."
+lint = "ruff check ."
+type = "mypy -p src"
+
