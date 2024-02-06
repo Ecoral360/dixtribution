@@ -4,18 +4,19 @@ Dixipline
 """
 
 import argparse
+from itertools import chain
 from subprocess import Popen, PIPE
-import matplotlib.pyplot as plt
 from os import path
 import os
 import importlib
+import asyncio
 
-from .dixtributor import Dixtributor
+from .dixtributor import Dixtributor, Msg
 
 
 # Import dixtributors
 dixtributors_path = path.join(path.dirname(__file__), "dixtributors")
-dixtributors = {}
+all_dixtributors: dict[str, type[Dixtributor]] = {}
 for file in os.listdir(dixtributors_path):
     if file.endswith(".py") and file != "__init__.py":
         module = importlib.import_module(
@@ -25,7 +26,7 @@ for file in os.listdir(dixtributors_path):
             obj = getattr(module, obj_name)
             if (obj != Dixtributor and isinstance(obj, type)
                     and issubclass(obj, Dixtributor)):
-                dixtributors[obj.CLI_NAME] = obj
+                all_dixtributors[obj.CLI_NAME] = obj
 
 
 def parse_args():
@@ -33,9 +34,9 @@ def parse_args():
 
     # Dixtribution arguments
     parser.add_argument("-i", "--iterations", type=int, default=10)
-    parser.add_argument("-d", "--dixtributor", choices=dixtributors.keys(),
-                        nargs="+", action="append",
-                        default=None, help="Dixtributor to use")
+    parser.add_argument("-d", "--dixtributors", choices=all_dixtributors.keys(),
+                        nargs="+", action="append", required=True,
+                        help="Dixtributor to use")
 
     # Onze arguments
     parser.add_argument("-r", "--rounds", type=int, default=10)
@@ -44,35 +45,41 @@ def parse_args():
     return parser.parse_args()
 
 
-def play_game(onze_args) -> dict:
-    proccess = Popen(onze_args, stdout=PIPE, text=True, encoding="utf-8")
-    output, _ = proccess.communicate()
-    result = output.split("\n")[-2].removeprefix("[server] total_scores=")
-    print(result)
-    return eval(result)
+async def play_game(onze_args, dixtributors: list[Dixtributor]):
+    proccess = await asyncio.subprocess.create_subprocess_exec(
+        "onze", *onze_args, stdout=PIPE)
+
+    assert proccess.stdout is not None
+    while (next_msg := await proccess.stdout.readline()):
+        msg = Msg.deserialize_msg(next_msg.decode("utf-8"))
+        for dixtributor in dixtributors:
+            if dixtributor.filter(msg):
+                dixtributor.process_msg(msg)
 
 
-def plot_game_results(teams: tuple[str, str], results: list[dict]):
-    for i, team in enumerate(teams):
-        plt.plot([result[i] for result in results], label=f"Team {team}")
-    plt.legend()
-    plt.show()
-
-
-def run():
+async def main():
     args = parse_args()
 
-    onze_args = ["onze", "-r", str(args.rounds)]
+    onze_args = ["-r", str(args.rounds)]
 
     if len(args.seats) != 2:
         args.seats.append(args.seats[0])
 
-    teams = (path.basename(args.seats[0][0]),
-             path.basename(args.seats[1][0]))
-
     for seat in args.seats:
         onze_args += ["-s", str(seat[0])]
 
-    results = [play_game(onze_args) for _ in range(args.iterations)]
+    args.dixtributors = set(chain.from_iterable(args.dixtributors))
 
-    plot_game_results(teams, results)
+    dixtributors = [all_dixtributors[cli_name](args)
+                    for cli_name in args.dixtributors]
+
+    # we must play the game sequentially to make the dixtributors consistent
+    for _ in range(args.iterations):
+        await play_game(onze_args, dixtributors)
+
+    for dixtributor in dixtributors:
+        dixtributor.generate_result()
+
+
+def run():
+    asyncio.run(main())
