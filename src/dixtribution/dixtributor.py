@@ -42,8 +42,9 @@ class Msg:
 
 
 class Dixtributor(ABC):
-    def __init__(self, cmd_args: Namespace):
+    def __init__(self, cmd_args: Namespace, *dixtributor_args):
         self.cmd_args = cmd_args
+        self.dixtributor_args = dixtributor_args
 
     @abstractmethod
     def filter(self, msg: Msg) -> bool:

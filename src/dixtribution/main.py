@@ -29,6 +29,22 @@ for file in os.listdir(dixtributors_path):
             module, "__dixtributor__")
 
 
+class DixtributorAction(argparse.Action):
+    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+        super().__init__(option_strings, dest, nargs=nargs, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        assert values is not None
+
+        if values[0] not in all_dixtributors:
+            parser.error("Invalid dixtributor, must be one of the following: "
+                         f"{{{', '.join(all_dixtributors.keys())}}}")
+
+        total_values = getattr(namespace, self.dest, []) or []
+        total_values.append([values[0], *values[1:]])
+        setattr(namespace, self.dest, total_values)
+
+
 def parse_args():
     parser = argparse.ArgumentParser(prog="dixtribution")
 
@@ -37,9 +53,18 @@ def parse_args():
 
     # Dixtribution arguments
     parser.add_argument("-i", "--iterations", type=int, default=10)
-    parser.add_argument("-d", "--dixtributors", choices=all_dixtributors.keys(),
-                        nargs="+", action="append", help="Dixtributor to use")
+    parser.add_argument("-d", "--dixtributors",
+                        nargs="+",
+                        action=DixtributorAction,
+                        help="Dixtributor to use",
+                        metavar=(f"{{{', '.join(all_dixtributors)}}}", "args"))
 
+    parser.add_argument("-o", "--output", nargs="?", type=str, const="output")
+
+    parser.add_argument(
+        "-f", "--format", choices=["csv", "json", "scm"], default="json",
+        help="Output format"
+    )
     # Onze arguments
     parser.add_argument("-r", "--rounds", type=int, default=10)
     parser.add_argument("-s", '--seats', nargs="+",
@@ -70,10 +95,8 @@ async def main():
     for seat in args.seats:
         onze_args += ["-s", str(seat[0])]
 
-    args.dixtributors = set(chain.from_iterable(args.dixtributors))
-
-    dixtributors = [all_dixtributors[cli_name](args)
-                    for cli_name in args.dixtributors]
+    dixtributors = [all_dixtributors[dixtributor_name](args, *rest)
+                    for [dixtributor_name, *rest] in args.dixtributors]
 
     # we must play the game sequentially to make the dixtributors consistent
     for _ in range(args.iterations):
