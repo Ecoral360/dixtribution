@@ -42,13 +42,6 @@ class Msg:
 
 
 class Dixtributor(ABC):
-    CLI_NAME: str
-
-    def __init_subclass__(cls, **kwargs):
-        super().__init_subclass__(**kwargs)
-        if not hasattr(cls, "CLI_NAME"):
-            raise AttributeError("Subclass must have a CLI_NAME attribute")
-
     def __init__(self, cmd_args: Namespace):
         self.cmd_args = cmd_args
 

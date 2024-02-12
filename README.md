@@ -38,11 +38,13 @@ For example, the `plt_final` dixtributor plots the final score of each game in a
 
 ## Adding a custom Dixtributor
 
-To add your custom Dixtributor: 
-1. Add a python file in the `src/dixtribution/dixtributors` directory.
-2. In that file, add a class that inherits from [Dixtributor](src/dixtribution/dixtributor.py)
-3. Add the `CLI_NAME` class attribute (that's how you will trigger it in the `dixtribution` command)
-4. Add the required methods from the Dixtributor abstract class to your class
+To add your custom Dixtributor:
+
+1. Add a python file in the `src/dixtribution/dixtributors` directory;
+   > The name of the file is the name you will use (in the `-d` argument of the `dixtribution` command) to trigger you dixtributor.
+2. In that file, add a class that inherits from [Dixtributor](src/dixtribution/dixtributor.py);
+3. Add the required methods from the Dixtributor abstract class to your class;
+4. Add `__dixtributor__ = <YourDixtributorClass>` at the end of your dixtributor python file;
 5. Run the `dixtribution` command with the `-d <your-CLI_NAME>` to see it in action!
 
 ## License

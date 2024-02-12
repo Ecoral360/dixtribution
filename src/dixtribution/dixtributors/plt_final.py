@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 
 
 class PlotResultDixtributor(Dixtributor):
-    CLI_NAME = "plt_final"
-
     def __init__(self, cmd_args):
         super().__init__(cmd_args)
         self.teams = (path.basename(cmd_args.seats[0][0]),
@@ -24,3 +22,6 @@ class PlotResultDixtributor(Dixtributor):
                      for result in self.results], label=f"Team {team}")
         plt.legend()
         plt.show()
+
+
+__dixtributor__ = PlotResultDixtributor

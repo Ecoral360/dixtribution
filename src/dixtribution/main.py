@@ -22,11 +22,11 @@ for file in os.listdir(dixtributors_path):
         module = importlib.import_module(
             f".dixtributors.{file.removesuffix('.py')}",
             package="dixtribution")
-        for obj_name in dir(module):
-            obj = getattr(module, obj_name)
-            if (obj != Dixtributor and isinstance(obj, type)
-                    and issubclass(obj, Dixtributor)):
-                all_dixtributors[obj.CLI_NAME] = obj
+        if not hasattr(module, "__dixtributor__"):
+            raise ImportError(
+                f"Module {file.removesuffix('.py')} does not contain a __dixtributor__")
+        all_dixtributors[file.removesuffix(".py")] = getattr(
+            module, "__dixtributor__")
 
 
 def parse_args():
