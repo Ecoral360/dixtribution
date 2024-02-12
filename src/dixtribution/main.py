@@ -59,12 +59,6 @@ def parse_args():
                         help="Dixtributor to use",
                         metavar=(f"{{{', '.join(all_dixtributors)}}}", "args"))
 
-    parser.add_argument("-o", "--output", nargs="?", type=str, const="output")
-
-    parser.add_argument(
-        "-f", "--format", choices=["csv", "json", "scm"], default="json",
-        help="Output format"
-    )
     # Onze arguments
     parser.add_argument("-r", "--rounds", type=int, default=10)
     parser.add_argument("-s", '--seats', nargs="+",
