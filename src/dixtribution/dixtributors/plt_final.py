@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 
 class PlotResultDixtributor(Dixtributor):
-    def __init__(self, cmd_args, *dixtributor_args):
-        super().__init__(cmd_args, *dixtributor_args)
+    def __init__(self, cmd_args, dixtributor_args):
+        super().__init__(cmd_args, dixtributor_args)
         self.teams = (path.basename(cmd_args.seats[0][0]),
                       path.basename(cmd_args.seats[1][0]))
         self.results = []

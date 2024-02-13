@@ -89,8 +89,9 @@ async def main():
     for seat in args.seats:
         onze_args += ["-s", str(seat[0])]
 
-    dixtributors = [all_dixtributors[dixtributor_name](args, *rest)
-                    for [dixtributor_name, *rest] in args.dixtributors]
+    dixtributors = [all_dixtributors[dixtributor_name](args, {
+        key: value for key, value in map(lambda arg: arg.split("=", 1), rest)
+    }) for [dixtributor_name, *rest] in args.dixtributors]
 
     # we must play the game sequentially to make the dixtributors consistent
     for _ in range(args.iterations):
