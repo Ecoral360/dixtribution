@@ -17,6 +17,7 @@ class PlotResultDixtributor(Dixtributor):
         self.results.append(msg.data)
 
     def generate_result(self):
+        print(self.results)
         for i, team in enumerate(self.teams):
             plt.plot([result[str(i)]
                      for result in self.results], label=f"Team {team}")
