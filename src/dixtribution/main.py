@@ -20,13 +20,13 @@ all_dixtributors: dict[str, type[Dixtributor]] = {}
 for file in os.listdir(dixtributors_path):
     if file.endswith(".py") and file != "__init__.py":
         module = importlib.import_module(
-            f".dixtributors.{file.removesuffix('.py')}",
-            package="dixtribution")
+            f".dixtributors.{file.removesuffix('.py')}", package="dixtribution"
+        )
         if not hasattr(module, "__dixtributor__"):
             raise ImportError(
-                f"Module {file.removesuffix('.py')} does not contain a __dixtributor__")
-        all_dixtributors[file.removesuffix(".py")] = getattr(
-            module, "__dixtributor__")
+                f"Module {file.removesuffix('.py')} does not contain a __dixtributor__"
+            )
+        all_dixtributors[file.removesuffix(".py")] = getattr(module, "__dixtributor__")
 
 
 class DixtributorAction(argparse.Action):
@@ -37,8 +37,10 @@ class DixtributorAction(argparse.Action):
         assert values is not None
 
         if values[0] not in all_dixtributors:
-            parser.error("Invalid dixtributor, must be one of the following: "
-                         f"{{{', '.join(all_dixtributors.keys())}}}")
+            parser.error(
+                "Invalid dixtributor, must be one of the following: "
+                f"{{{', '.join(all_dixtributors.keys())}}}"
+            )
 
         total_values = getattr(namespace, self.dest, []) or []
         total_values.append([values[0], *values[1:]])
@@ -48,30 +50,35 @@ class DixtributorAction(argparse.Action):
 def parse_args():
     parser = argparse.ArgumentParser(prog="dixtribution")
 
-    parser.add_argument("-V", "--version", action="version",
-                        version="%(prog)s 0.1")
+    parser.add_argument("-V", "--version", action="version", version="%(prog)s 0.1")
 
     # Dixtribution arguments
     parser.add_argument("-i", "--iterations", type=int, default=10)
-    parser.add_argument("-d", "--dixtributors",
-                        nargs="+",
-                        action=DixtributorAction,
-                        help="Dixtributor to use",
-                        metavar=(f"{{{', '.join(all_dixtributors)}}}", "args"))
+    parser.add_argument(
+        "-d",
+        "--dixtributors",
+        nargs="+",
+        action=DixtributorAction,
+        help="Dixtributor to use",
+        metavar=(f"{{{', '.join(all_dixtributors)}}}", "args"),
+    )
 
     # Onze arguments
     parser.add_argument("-r", "--rounds", type=int, default=10)
-    parser.add_argument("-s", '--seats', nargs="+",
-                        action="append", help="Seat")
+    parser.add_argument("-s", "--seats", nargs="+", action="append", help="Seat")
+    parser.add_argument(
+        "-c", "--config", type=argparse.FileType("r"), help="Config file"
+    )
     return parser.parse_args()
 
 
 async def play_game(onze_args, dixtributors: list[Dixtributor]):
     proccess = await asyncio.subprocess.create_subprocess_exec(
-        "onze", *onze_args, stdout=PIPE)
+        "onze", *onze_args, stdout=PIPE
+    )
 
     assert proccess.stdout is not None
-    while (next_msg := await proccess.stdout.readline()):
+    while next_msg := await proccess.stdout.readline():
         msg = Msg.deserialize_msg(next_msg.decode("utf-8"))
         for dixtributor in dixtributors:
             if dixtributor.filter(msg):
@@ -89,9 +96,16 @@ async def main():
     for seat in args.seats:
         onze_args += ["-s", str(seat[0])]
 
-    dixtributors = [all_dixtributors[dixtributor_name](args, {
-        key: value for key, value in map(lambda arg: arg.split("=", 1), rest)
-    }) for [dixtributor_name, *rest] in args.dixtributors]
+    dixtributors = [
+        all_dixtributors[dixtributor_name](
+            args,
+            {
+                key: value[0] if value else key
+                for key, *value in map(lambda arg: arg.split("=", 1), rest)
+            },
+        )
+        for [dixtributor_name, *rest] in args.dixtributors
+    ]
 
     # we must play the game sequentially to make the dixtributors consistent
     for _ in range(args.iterations):

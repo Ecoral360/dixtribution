@@ -12,9 +12,11 @@ def valid_fmt_or_raise(fmt: str) -> str:
 
 class ExportDixtributor(Dixtributor):
     def __init__(self, cmd_args, dixtributor_args):
-        super().__init__(cmd_args, *dixtributor_args)
-        self.teams = (path.basename(cmd_args.seats[0][0]),
-                      path.basename(cmd_args.seats[1][0]))
+        super().__init__(cmd_args, dixtributor_args)
+        self.teams = (
+            path.basename(cmd_args.seats[0][0]),
+            path.basename(cmd_args.seats[1][0]),
+        )
 
         self.export_file = "results"
         self.export_fmt = "json"
@@ -22,8 +24,7 @@ class ExportDixtributor(Dixtributor):
         if (file := dixtributor_args.get("o")) is not None:
             self.export_file = file.split(".")[0]
             if "." in file:
-                self.export_fmt = valid_fmt_or_raise(
-                    file.split(".")[-1])
+                self.export_fmt = valid_fmt_or_raise(file.split(".")[-1])
         if (fmt := dixtributor_args.get("fmt")) is not None:
             self.export_fmt = valid_fmt_or_raise(fmt)
 

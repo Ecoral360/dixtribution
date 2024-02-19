@@ -2,8 +2,7 @@ from argparse import Namespace
 from ..dixtributor import Dixtributor, Msg, MsgType
 
 
-def calculate_force(n_iter: int) -> list[float]:
-    ...
+def calculate_force(n_iter: int) -> list[float]: ...
 
 
 class PlotResultDixtributor(Dixtributor):
