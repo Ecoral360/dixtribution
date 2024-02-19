@@ -34,7 +34,7 @@ class ErrDixtributor(Dixtributor):
                 continue
             team = self.teams[int(player) % 2]
             print(
-                f"Player {player}(team {team}) has played {len(cards)} invalid cards "
+                f"Player {player} (team {team}) has played {len(cards)} invalid cards "
                 f"out of {self.nb_cards_played}:",
             )
             if self.show_ratio:
